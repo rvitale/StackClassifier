@@ -17,7 +17,7 @@ public class CsvReader implements Iterable<Map<String, Object>> {
 
 	public CsvReader(File file) throws IOException {
 		this.file = file;
-		
+		openStream();
 		this.nextLine = reader.readLine();
 		
 	}
