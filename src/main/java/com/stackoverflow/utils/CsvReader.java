@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
 public class CsvReader implements Iterable<Map<String, String>> {
 
 	public static final int NUMBER_OF_COLUMNS = 15;
@@ -41,11 +43,14 @@ public class CsvReader implements Iterable<Map<String, String>> {
 			columns = header.split(",");
 			System.out.println(Arrays.toString(columns));
 		} else {
-			// TODO: throw exception (file empty)
+			throw new IOException("Empty file");
 		}
 		
 		if (columns.length != NUMBER_OF_COLUMNS) {
-			// TODO: throw exception (bad format)
+			String errorMessage = String.format(
+					"Wrong columns number: expected %d, found %d",
+					columns.length, NUMBER_OF_COLUMNS);
+			throw new IOException(errorMessage);
 		}
 	}
 	
@@ -124,7 +129,9 @@ public class CsvReader implements Iterable<Map<String, String>> {
 				
 				// Sanity check: verify that we have filled all the columns.
 				if (record.keySet().size() != NUMBER_OF_COLUMNS) {
-					// TODO: throw exception (unexpected end of file or malformed record).
+					// We can't throw a Throwable here.
+					throw new RuntimeErrorException(
+							new Error("Unexpected end of file"));
 				}
 				return record;
 			}
