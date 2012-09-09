@@ -18,7 +18,6 @@ public class CsvReader implements Iterable<Map<String, String>> {
 	private String[] columns;
 
 	public CsvReader(File file) throws IOException {
-		int i = 0;
 		this.file = file;
 		openStream();
 	}
