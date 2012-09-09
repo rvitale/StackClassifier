@@ -1,9 +1,10 @@
-package com.stackoverflow.test.utils;
+package com.stackoverflow.utils;
 
 import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.junit.Test;
@@ -17,8 +18,14 @@ public class CsvReaderTest {
 	public void iterableTest() {
 		CsvReader reader = null;
 		try {
-			reader = new CsvReader(new File("/home/riccardo/sample.csv"));
+			File testFile = new File(this.getClass()
+				.getResource("/com/stackoverflow/utils/sample.csv")
+				.toURI());
+			reader = new CsvReader(testFile);
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int iterations = 0;
