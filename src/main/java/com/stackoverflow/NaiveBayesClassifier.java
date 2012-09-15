@@ -1,5 +1,10 @@
 package com.stackoverflow;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.stackoverflow.utils.CsvReader;
 
 class NaiveBayesClassifier {
@@ -11,10 +16,10 @@ class NaiveBayesClassifier {
     }
    
    private void addWord(String word) {
-        if (!wordCounter.contains(word)) {
-            wordCounter.set(word, 1);
+        if (!wordCounter.containsKey(word)) {
+            wordCounter.put(word, 1);
         } else {        
-            wordCounter.set(word, wordCounter.get(word) + 1);
+            wordCounter.put(word, wordCounter.get(word) + 1);
         }
    }
    

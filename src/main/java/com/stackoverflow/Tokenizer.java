@@ -14,7 +14,7 @@ import java.util.List;
 public class Tokenizer {
 
     // Small sample of possible word separators.
-    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\\t\n\r"
+    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\\t\n\r";
     	
 	/**
 	 * Tokenizes the text in the instance to produce the words contained in it. 
