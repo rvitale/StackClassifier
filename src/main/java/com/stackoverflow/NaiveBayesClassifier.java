@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.stackoverflow.utils.CsvReader;
+import com.stackoverflow.utils.Tokenizer;
 
 class NaiveBayesClassifier {
    

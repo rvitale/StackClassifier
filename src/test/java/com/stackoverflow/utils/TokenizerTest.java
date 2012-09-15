@@ -1,11 +1,8 @@
 package com.stackoverflow.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.stackoverflow.utils.Tokenizer;
+import org.junit.Test;
 
 public class TokenizerTest {
 
