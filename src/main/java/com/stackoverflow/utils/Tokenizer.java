@@ -37,7 +37,7 @@ public class Tokenizer {
 			if(isSeparator(i, rawText)) {
                 // If the word is shorter than MINIMUM_LENGTH
                 // characters it is ignored.
-                if (i - currentOffset < MINIMUM_LENGTH) {                    
+                if (i - currentOffset >= MINIMUM_LENGTH) {                    
                     String word;
     				if (caseSensitive) {
     					word = rawText.substring(currentOffset, i);
@@ -73,21 +73,21 @@ public class Tokenizer {
      * @param c the character to check.
 	 * @return whether or not the char is a separator.
 	 */
-    protected static boolean isSeparator(String text, int pos) {
+    protected static boolean isSeparator(int pos, String text) {
         char c = text.charAt(pos);
-        if (IN_WORD_SEPARATOR.indexOf(c) != - 1) {
-            if (pos != 0 || pos != text.length() - 1) {
-                return isCharacter(text.charAt(pos - 1)) && isCharacter(text.charAt(pos + 1));
+        if (IN_WORD_SEPARATORS.indexOf(c) != - 1) {
+            if (pos != 0 && pos != text.length() - 1) {
+                return !(isCharacter(text.charAt(pos - 1)) && isCharacter(text.charAt(pos + 1)));
             } else {
-                return false;
+                return true;
             }
         } else {
-            return isCharacter(c);   
+            return !isCharacter(c);   
         }
     }
 	
     protected static boolean isCharacter(char c) {
-        return (c < 65 || c > 90) && (c < 97 || c > 122);
+        return (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
     }
 	
 }
