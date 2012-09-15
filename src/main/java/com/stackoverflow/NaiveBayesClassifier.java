@@ -10,28 +10,32 @@ import com.stackoverflow.utils.Tokenizer;
 
 class NaiveBayesClassifier {
    
-   private Map<String, Integer> wordCounter;
+   private Map<String, Integer> openOccurrences;
+   private Map<String, Integer> closedOccurrences;
    
    public NaiveBayesClassifier() {
-       wordCounter = new HashMap<String, Integer>();
+       openOccurrences = new HashMap<String, Integer>();
+       closedOccurrences = new HashMap<String, Integer>();
     }
    
-   private void addWord(String word) {
-        if (!wordCounter.containsKey(word)) {
-            wordCounter.put(word, 1);
+   private void addWord(Map<String, String> occurrences, String word) {
+        if (!occurrences.containsKey(word)) {
+            occurrences.put(word, 1);
         } else {        
-            wordCounter.put(word, wordCounter.get(word) + 1);
+            occurrences.put(word, occurrences.get(word) + 1);
         }
    }
    
    public void train(File trainingFile) {
        
        CsvReader reader = new CsvReader(trainingFile);
+       Map<String, String> currentMap;
        for (Map<String, String> line : reader) {
+		   currentMap = line.get("openStatus").equals("open") ? openOccurrences : closedOccurrences;
            String text = line.get("BodyMarkdown");
            List<String> tokens = Tokenizer.tokenize(text);
            for (String word : tokens) {
-               addWord(word);
+               addWord(currentMap, word);
            }
        }
    }
@@ -39,9 +43,5 @@ class NaiveBayesClassifier {
    public static void main(String[] args) {
        NaiveBayesClassifier c = new NaiveBayesClassifier();
        c.train(file);
-       
-       
    }
-   
-    
 }
