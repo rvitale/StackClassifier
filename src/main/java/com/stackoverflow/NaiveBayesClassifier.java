@@ -16,10 +16,18 @@ class NaiveBayesClassifier {
    
    private Map<String, Integer> openOccurrences;
    private Map<String, Integer> closedOccurrences;
+   private Map<String, Double> openProbabilities;
+   private int totalSamples;
+   private int openedSamples;
+   private double openedProbability;
    
    public NaiveBayesClassifier() {
        openOccurrences = new HashMap<String, Integer>();
        closedOccurrences = new HashMap<String, Integer>();
+       openProbabilities = new Map<String, Double>();
+       totalSamples = 0;
+       openedSamples = 0;
+       openedProbability = 0.0;
     }
    
    private void addWord(Map<String, Integer> occurrences, String word) {
@@ -35,13 +43,68 @@ class NaiveBayesClassifier {
        CsvReader reader = new CsvReader(trainingFile);
        Map<String, Integer> currentMap;
        for (Map<String, String> line : reader) {
-		   currentMap = line.get("OpenStatus").equals("open") ? openOccurrences : closedOccurrences;
+           
+           if (line.get("OpenStatus").equals("open")) {
+               currentMap = openOccurrences;
+               ++openedSamples;
+           } else {
+               currentMap = closedOccurrences
+           }
+           ++totalSamples;
+           
            String text = line.get("BodyMarkdown");
            List<String> tokens = Tokenizer.tokenize(text);
            for (String word : tokens) {
                addWord(currentMap, word);
            }
+           
+           openedProbability = openedSamples / (double) totalSamples;
        }
+       
+       // openProbabilities contains P(word|opened)
+       
+       for (String word : openOccurrences.keySet()) {
+            if (closedOccurrences.containsKey(word)) {
+                int total = openOccurrences.get(word) + closedOccurrences.get(word);
+                openProbabilities.put(word, openOccurrences.get(word)/total);
+            } else {
+                openProbabilities.put(word, 1.0);   
+            }
+       }
+       
+       for (String word : closedOccurrences.keySet()) {
+            if (!openOccurrences.containsKey(word)) {
+                openProbabilities.put(word, 1.0);   
+            }
+       }
+   }
+   
+   public String predict(String text) {
+        List<String> tokens = Tokenizer.tokenize(text);
+        // P'(opened|word) = P(word|opened)P(opened)
+        // P'(closed|word) = P(word|closed)P(closed)
+        // P(opened|word) = P'(opened|word) / (P'(opened|word) + P'(closed|word))
+        
+        openProbTotal = 1.0;
+        closedProbTotal = 1.0;
+        
+        for(String word : tokens) {
+            double openedProb = openProbabilities.get(word) * openProbability;
+            double closedProb = (1 - openProbabilities.get(word)) * (1 - openProbability);
+            
+            double normalizer = openedProb + closedProb;
+            openedProb /= normalizer;
+            closedProb /= normalizer;
+            
+            openProbTotal *= openedProb;
+            closedProbTotal *= closedProb;
+        }
+        
+        if (openProbTotal > closedProbTotal) {
+            return "OPEN: " + openProbTotal;
+        } else {
+            return "CLOSED: " + closedProbTotal;
+        }
    }
    
    protected void writeWordsToFile(File wordsFile) throws IOException {
