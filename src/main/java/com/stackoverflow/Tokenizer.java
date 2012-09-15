@@ -1,4 +1,4 @@
-package interview.microsoft.problem1;
+package com.stackoverflow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 public class Tokenizer {
 
     // Small sample of possible word separators.
-    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\"
+    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\";
     	
 	/**
 	 * Tokenizes the text in the instance to produce the words contained in it. 
