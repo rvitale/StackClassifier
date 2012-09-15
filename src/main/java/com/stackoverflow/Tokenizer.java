@@ -14,7 +14,7 @@ import java.util.List;
 public class Tokenizer {
 
     // Small sample of possible word separators.
-    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\";
+    private static final String SEPARATORS = " ,.;:-?!()[]{}\"<>\\\t\n\r"
     	
 	/**
 	 * Tokenizes the text in the instance to produce the words contained in it. 
@@ -22,7 +22,7 @@ public class Tokenizer {
      * caseSensitive parameter.
 	 *
      * @param rawText the text to tokenize.
-     * @param caseSensitive true if the words must be treated a the same word if
+     * @param caseSensitive true if the words must be treated s the same word if
      *      they have different cases.
      * 
      * @return a List<String> containing the tokens extracted from the text.

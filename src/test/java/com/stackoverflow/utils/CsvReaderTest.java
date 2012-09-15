@@ -13,7 +13,6 @@ import com.stackoverflow.utils.CsvReader;
 
 public class CsvReaderTest {
 
-
 	@Test
 	public void iterableTest() {
 		CsvReader reader = null;
@@ -25,7 +24,6 @@ public class CsvReaderTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int iterations = 0;
