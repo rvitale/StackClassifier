@@ -3,6 +3,7 @@ package com.stackoverflow;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -107,8 +108,8 @@ class NaiveBayesClassifier {
             closedProbTotal *= closedProb;
         }
         
-        System.out.println("Opened Prob: " + openProbTotal);
-        System.out.println("Closed Prob: " + closedProbTotal);
+        //System.out.println("Opened Prob: " + openProbTotal);
+        //System.out.println("Closed Prob: " + closedProbTotal);
         
         
         if (openProbTotal > closedProbTotal) {
@@ -118,7 +119,7 @@ class NaiveBayesClassifier {
         }
    }
    
-   protected double verifyTrainData() {
+   protected double verifyTrainData() throws URISyntaxException, IOException {
         int correctMatch = 0;
         int numberOfSamples = 0;
         File trainFile = new File(NaiveBayesClassifier.class.getResource("/train-sample.csv").toURI());
@@ -164,8 +165,6 @@ class NaiveBayesClassifier {
        File trainFile = new File(NaiveBayesClassifier.class.getResource("/train-sample.csv").toURI());
        c.train(trainFile);
        
-       File inputFile = new File(NaiveBayesClassifier.class.getResource("/input.txt").toURI());
-       String inputString = FileUtils.readFileToString(inputFile);
-       System.out.println(c.predict(inputString));
+       System.out.println(c.verifyTrainData());
    }
 }
