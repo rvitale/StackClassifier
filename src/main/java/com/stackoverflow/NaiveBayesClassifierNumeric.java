@@ -63,11 +63,15 @@ public class NaiveBayesClassifierNumeric {
                 // avg = (avg(n-1) * (n -1)) + Xn / n               avg = sum(Xi) / n | i=1..n
                 double newMean = (parameterMeans.get(featureName) * counter + feature) / (counter + 1);
                 double newSquare = parameterSquares.get(featureName) + Math.pow(feature, 2);
-                double newVariance = newSquare / counter + 1 - Math.pow(newMean, 2);
                 
                 parameterMeans.put(featureName, newMean);
                 parameterSquares.put(featureName, newSquare);
-                pprameterVariances.put(featureNames, neVariance);
+                
+                if(counter > 1) {
+                	double newVariance = newSquare / (counter+1) - Math.pow(newMean, 2);
+                	parameterVariances.put(featureName, newVariance);
+                }
+                
             }
 
             counters.put(parameter, counter + 1);
