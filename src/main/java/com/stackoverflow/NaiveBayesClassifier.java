@@ -67,17 +67,20 @@ class NaiveBayesClassifier {
        // openProbabilities contains P(word|opened)
        
        for (String word : openOccurrences.keySet()) {
+            double probability;
             if (closedOccurrences.containsKey(word)) {
                 int total = openOccurrences.get(word) + closedOccurrences.get(word);
-                openProbabilities.put(word, openOccurrences.get(word)/(double)total);
+                probability = (openOccurrences.get(word) + SMOOTHING_ALPHA) / (double) (total + (SMOOTHING_ALPHA * 2));
             } else {
-                openProbabilities.put(word, 1.0);   
+                probability = (openOccurrences.get(word) + SMOOTHING_ALPHA) / (double) (openOccurrences.get(word) + (SMOOTHING_ALPHA * 2));
             }
+            openProbabilities.put(word, probability);
        }
        
        for (String word : closedOccurrences.keySet()) {
             if (!openOccurrences.containsKey(word)) {
-                openProbabilities.put(word, 1.0);   
+                openProbabilities.put(word,
+                    1 - (closedOccurrences.get(word) + SMOOTHING_ALPHA) / (double) (closedOccurrences.get(word) + (SMOOTHING_ALPHA * 2)));   
             }
        }
    }
