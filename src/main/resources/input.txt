@@ -1,7 +1,1 @@
-I did not find a place holder for asking questions related to Digital design - Frontend / Backend(Physical) on stackexchange. So i proposed one there on area51. So for time being asking my question here -
-
-1]I am looking for a book on Physical Design/Backend design for beginners. I am basically a software developer,having overview(no hands-on) of Digital design process(both frontend and backend). But now as part of job, I have to start contributing by doing ""real work"" on Physical design for a SoC. What book would explain in detail, almost all aspects of Physical Design, in a step by step kind of manner. 
-
-If you point of any other reading material like blogs/IEEE-papers/websites/forums which talk about physical design would also help me.
-
-Thank You.
+I have included tabs in my program through which the user can select the required activity. But my main problem is that i couldnt find a way to display the tabs throughout the application. For example, on clicking a tab the corresponding tab opens. But when i click on a button the activity is displayed but the tabs are not getting displayed.

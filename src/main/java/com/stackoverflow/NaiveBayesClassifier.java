@@ -1,7 +1,6 @@
 package com.stackoverflow;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ class NaiveBayesClassifier {
    private int totalSamples;
    private int openedSamples;
    private double openedProbability;
+   
+   private final static double SMOOTHING_ALPHA = 1.0;
    
    public NaiveBayesClassifier() {
        openOccurrences = new HashMap<String, Integer>();
