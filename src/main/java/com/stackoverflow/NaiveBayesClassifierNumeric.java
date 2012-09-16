@@ -13,13 +13,15 @@ public class NaiveBayesClassifierNumeric {
     private String parameterName;
     
     protected Map<String, Integer> counters;
-    protected Map<String, Map<String, Double>> means, variances;
+    protected Map<String, Map<String, Double>> squares, means, variances;
     
     public NaiveBayesClassifierNumeric(String[] features, String parameter) {
         featureNames = features;
         parameterName = parameter;
         
         counters = new HashMap<String, Integer>();
+        
+        squares = new HashMap<String, Map<String, Double>>();
         means = new HashMap<String, Map<String, Double>>();
         variances = new HashMap<String, Map<String, Double>>();
     }
@@ -42,29 +44,43 @@ public class NaiveBayesClassifierNumeric {
                 }
                 
                 if(!means.containsKey(parameter)) {
-                    means.put(parameter, newMeansMap());   
+                    means.put(parameter, newParameterMap());   
                 }
                 Map<String, Double> parameterMeans = means.get(parameter);
+
+                if(!squares.containsKey(parameter)) {
+                    squares.put(parameter, newParameterMap());   
+                }
+                Map<String, Double> parameterSquares = squares.get(parameter);
+
+                if(!variances.containsKey(parameter)) {
+                    variances.put(parameter, newParameterMap());   
+                }
+                Map<String, Double> parameterVariances = variances.get(parameter);
 
                 double feature = Double.parseDouble(line.get(featureName));
                 
                 // avg = (avg(n-1) * (n -1)) + Xn / n               avg = sum(Xi) / n | i=1..n
                 double newMean = (parameterMeans.get(featureName) * counter + feature) / (counter + 1);
+                double newSquare = parameterSquares.get(featureName) + Math.pow(feature, 2);
+                double newVariance = newSquare / counter - Math.pow(newMean, 2);
                 
                 parameterMeans.put(featureName, newMean);
+                parameterSquares.put(featureName, newSquare);
+                parameterVariances.put(featureNames, newVariance);
             }
 
             counters.put(parameter, counter+1);
         }
     }
     
-    private Map<String, Double> newMeansMap() {
+    private Map<String, Double> newParameterMap() {
         
-        Map<String, Double> means = new HashMap<String, Double>();
+        Map<String, Double> map = new HashMap<String, Double>();
         for(String featureName : featureNames) {
-            means.put(featureName, 0.0);   
+            map.put(featureName, 0.0);   
         }
         
-        return means;
+        return map;
     }
 }
