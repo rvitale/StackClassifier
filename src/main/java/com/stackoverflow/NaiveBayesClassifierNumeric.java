@@ -1,5 +1,6 @@
 package com.stackoverflow;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class NaiveBayesClassifierNumeric {
                 double feature = Double.parseDouble(line.get(featureName));
                 
                 // avg = (avg(n-1) * (n -1)) + Xn / n               abg = sum(Xi) / n | i=1..n
-                means[i] = means[i] * counter + feature / (counter + 1);
+                means[i] = (means[i] * counter + feature) / (counter + 1);
             }
             ++counter;
         }
