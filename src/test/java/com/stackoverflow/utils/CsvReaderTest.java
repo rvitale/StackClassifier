@@ -28,7 +28,7 @@ public class CsvReaderTest {
 		}
 		int iterations = 0;
 		for (Map<String, String> line : reader) {
-			assertEquals(CsvReader.NUMBER_OF_COLUMNS, line.keySet().size());
+			assertEquals(CsvReader.numberOfColumns, line.keySet().size());
 			++iterations;
 		}
 		assertEquals(2, iterations);

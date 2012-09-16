@@ -13,7 +13,7 @@ import javax.management.RuntimeErrorException;
 
 public class CsvReader implements Iterable<Map<String, String>> {
 
-	public static final int NUMBER_OF_COLUMNS = 15;
+	protected static int numberOfColumns = 15;
 	
 	private File file;
 	private BufferedReader reader;
@@ -41,16 +41,10 @@ public class CsvReader implements Iterable<Map<String, String>> {
 		if ((header = reader.readLine()) != null && !header.isEmpty()) {
 			System.out.println(header);
 			columns = header.split(",");
+            numberOfColumns = columns.length;
 			System.out.println(Arrays.toString(columns));
 		} else {
 			throw new IOException("Empty file");
-		}
-		
-		if (columns.length != NUMBER_OF_COLUMNS) {
-			String errorMessage = String.format(
-					"Wrong columns number: expected %d, found %d",
-					columns.length, NUMBER_OF_COLUMNS);
-			throw new IOException(errorMessage);
 		}
 	}
 	
@@ -87,8 +81,12 @@ public class CsvReader implements Iterable<Map<String, String>> {
 				String carry = "";  // Used for multiline fields.
 				Map<String, String> record = new HashMap<String, String>();
 				
+                // TODO: handle the case that a given row doesn't have the
+                // same amount of columns as the header. In that case just
+                // notify the user and go to the next row (or abort?).
+
 				// Stopping when we fill all the columns or the nextLine is null.
-				while (colIndex < NUMBER_OF_COLUMNS && nextLine != null) {
+				while (colIndex < numberOfColumns && nextLine != null) {
 					for (int i = 0; i < nextLine.length(); ++i) {
 						if (nextLine.charAt(i) == '"') {
 							++numberOfQuotes;
@@ -98,7 +96,7 @@ public class CsvReader implements Iterable<Map<String, String>> {
 						// we should just keep going.
 						if ((numberOfQuotes & 1) == 0 &&
 							(nextLine.charAt(i) == ',' || i == nextLine.length()-1)) {
-							i = (colIndex + 1 < NUMBER_OF_COLUMNS) ? i : i + 1;
+							i = (colIndex + 1 < numberOfColumns) ? i : i + 1;
 							record.put(columns[colIndex++],
 								carry + nextLine.substring(lastComma, i));
 							// Prepare variables for next field.
@@ -110,7 +108,7 @@ public class CsvReader implements Iterable<Map<String, String>> {
 						}
 					}
 					// We haven't filled all the columns but the line 
-					if (colIndex < NUMBER_OF_COLUMNS) {
+					if (colIndex < numberOfColumns) {
 						// If we haven't consumed all the line, put the remaining chunk in a carry.
 						if (lastComma != nextLine.length()) {
 							carry += nextLine.substring(lastComma);
@@ -128,7 +126,7 @@ public class CsvReader implements Iterable<Map<String, String>> {
 				}
 				
 				// Sanity check: verify that we have filled all the columns.
-				if (record.keySet().size() != NUMBER_OF_COLUMNS) {
+				if (record.keySet().size() != numberOfColumns) {
 					// We can't throw a Throwable here.
 					throw new RuntimeErrorException(
 							new Error("Unexpected end of file"));
