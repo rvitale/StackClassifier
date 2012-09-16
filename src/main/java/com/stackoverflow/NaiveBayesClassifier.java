@@ -1,6 +1,7 @@
 package com.stackoverflow;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 import com.stackoverflow.utils.CsvReader;
 import com.stackoverflow.utils.Tokenizer;
@@ -24,7 +27,7 @@ class NaiveBayesClassifier {
    public NaiveBayesClassifier() {
        openOccurrences = new HashMap<String, Integer>();
        closedOccurrences = new HashMap<String, Integer>();
-       openProbabilities = new Map<String, Double>();
+       openProbabilities = new HashMap<String, Double>();
        totalSamples = 0;
        openedSamples = 0;
        openedProbability = 0.0;
@@ -48,7 +51,7 @@ class NaiveBayesClassifier {
                currentMap = openOccurrences;
                ++openedSamples;
            } else {
-               currentMap = closedOccurrences
+               currentMap = closedOccurrences;
            }
            ++totalSamples;
            
@@ -66,7 +69,7 @@ class NaiveBayesClassifier {
        for (String word : openOccurrences.keySet()) {
             if (closedOccurrences.containsKey(word)) {
                 int total = openOccurrences.get(word) + closedOccurrences.get(word);
-                openProbabilities.put(word, openOccurrences.get(word)/total);
+                openProbabilities.put(word, openOccurrences.get(word)/(double)total);
             } else {
                 openProbabilities.put(word, 1.0);   
             }
@@ -85,12 +88,12 @@ class NaiveBayesClassifier {
         // P'(closed|word) = P(word|closed)P(closed)
         // P(opened|word) = P'(opened|word) / (P'(opened|word) + P'(closed|word))
         
-        openProbTotal = 1.0;
-        closedProbTotal = 1.0;
+        double openProbTotal = 1.0;
+        double closedProbTotal = 1.0;
         
         for(String word : tokens) {
-            double openedProb = openProbabilities.get(word) * openProbability;
-            double closedProb = (1 - openProbabilities.get(word)) * (1 - openProbability);
+            double openedProb = openProbabilities.get(word) * openedProbability;
+            double closedProb = (1 - openProbabilities.get(word)) * (1 - openedProbability);
             
             double normalizer = openedProb + closedProb;
             openedProb /= normalizer;
@@ -99,6 +102,10 @@ class NaiveBayesClassifier {
             openProbTotal *= openedProb;
             closedProbTotal *= closedProb;
         }
+        
+        System.out.println("Opened Prob: " + openProbTotal);
+        System.out.println("Closed Prob: " + closedProbTotal);
+        
         
         if (openProbTotal > closedProbTotal) {
             return "OPEN: " + openProbTotal;
@@ -136,6 +143,9 @@ class NaiveBayesClassifier {
        NaiveBayesClassifier c = new NaiveBayesClassifier();
        File trainFile = new File(NaiveBayesClassifier.class.getResource("/train-sample.csv").toURI());
        c.train(trainFile);
-       c.writeWordsToFile(new File("words.txt"));
+       
+       File inputFile = new File(NaiveBayesClassifier.class.getResource("/input.txt").toURI());
+       String inputString = FileUtils.readFileToString(inputFile);
+       System.out.println(c.predict(inputString));
    }
 }
