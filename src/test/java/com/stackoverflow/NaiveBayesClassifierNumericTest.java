@@ -18,9 +18,13 @@ public class NaiveBayesClassifierNumericTest {
             );
         c.train(trainFile);
         
-        assertEquals(5.855, c.means[0], 0.0);
-        assertEquals(176.25, c.means[1], 0.0);
-        assertEquals(11.25, c.means[2], 0.0);
+        assertEquals(5.855, c.means.get("male").get("Height"), 0.0);
+        assertEquals(176.25, c.means.get("male").get("Weight"), 0.0);
+        assertEquals(11.25, c.means.get("male").get("FootSize"), 0.0);
+        
+        assertEquals(5.4175, c.means.get("female").get("Height"), 0.0);
+        assertEquals(132.5, c.means.get("female").get("Weight"), 0.0);
+        assertEquals(7.5, c.means.get("female").get("FootSize"), 0.0);
         
     }
     
