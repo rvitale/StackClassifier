@@ -13,7 +13,7 @@ public class NaiveBayesClassifierNumeric {
     private String parameterName;
     
     protected Map<String, Integer> counters;
-    protected Map<String, Map<String, Double>> squares, means, variances;
+    protected Map<String, Map<String, Double>> tempValues, means, variances;
     
     public NaiveBayesClassifierNumeric(String[] features, String parameter) {
         featureNames = features;
@@ -21,7 +21,7 @@ public class NaiveBayesClassifierNumeric {
         
         counters = new HashMap<String, Integer>();
         
-        squares = new HashMap<String, Map<String, Double>>();
+        tempValues = new HashMap<String, Map<String, Double>>();
         means = new HashMap<String, Map<String, Double>>();
         variances = new HashMap<String, Map<String, Double>>();
     }
@@ -48,33 +48,48 @@ public class NaiveBayesClassifierNumeric {
                 }
                 Map<String, Double> parameterMeans = means.get(parameter);
 
-                if(!squares.containsKey(parameter)) {
-                    squares.put(parameter, newParameterMap());   
+                if(!tempValues.containsKey(parameter)) {
+                    tempValues.put(parameter, newParameterMap());   
                 }
-                Map<String, Double> parameterSquares = squares.get(parameter);
+                Map<String, Double> parameterTempVals = tempValues.get(parameter);
 
                 if(!variances.containsKey(parameter)) {
                     variances.put(parameter, newParameterMap());   
                 }
-                Map<String, Double> parameterVariances = variances.get(parameter);
+                //Map<String, Double> parameterVariances = variances.get(parameter);
 
                 double feature = Double.parseDouble(line.get(featureName));
                 
                 // avg = (avg(n-1) * (n -1)) + Xn / n               avg = sum(Xi) / n | i=1..n
-                double newMean = (parameterMeans.get(featureName) * counter + feature) / (counter + 1);
-                double newSquare = parameterSquares.get(featureName) + Math.pow(feature, 2);
+                //double newMean = (parameterMeans.get(featureName) * counter + feature) / (counter + 1);
+                //double newSquare = parameterSquares.get(featureName) + Math.pow(feature, 2);
+                
+                //if(counter > 1) {
+                //	double newVariance = newSquare / (counter) - Math.pow(parameterMeans.get(featureName), 2);
+                //	parameterVariances.put(featureName, newVariance);
+                //}
+                
+                double delta = feature - parameterMeans.get(featureName);
+                double newMean = parameterMeans.get(featureName) + delta / (counter + 1);
+                double m2 = parameterTempVals.get(featureName) + delta * (feature - newMean);
                 
                 parameterMeans.put(featureName, newMean);
-                parameterSquares.put(featureName, newSquare);
-                
-                if(counter > 1) {
-                	double newVariance = newSquare / (counter+1) - Math.pow(newMean, 2);
-                	parameterVariances.put(featureName, newVariance);
-                }
+                parameterTempVals.put(featureName, m2);
                 
             }
 
             counters.put(parameter, counter + 1);
+        }
+        
+        for(String parameterName : tempValues.keySet()) {
+	        for(String featureName : featureNames) {
+	        	double m2 = tempValues.get(parameterName).get(featureName);
+	        	double n = counters.get(parameterName);
+	        	//double variance_n = m2 / n;
+	        	double variance = m2 / (n -1);
+	        	
+	        	variances.get(parameterName).put(featureName, variance);
+	        }
         }
     }
     
