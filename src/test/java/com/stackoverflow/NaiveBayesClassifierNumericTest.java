@@ -1,8 +1,10 @@
 package com.stackoverflow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -35,11 +37,11 @@ public class NaiveBayesClassifierNumericTest {
         assertEquals(1.6667e+00, c.variances.get("female").get("FootSize"), 0.01);
         
         Map<String, Double> features = new HashMap<String, Double>();
-        features.put("Height", 6);
-        features.put("Weight", 130);
-        features.put("FootSize", 8);
+        features.put("Height", 6d);
+        features.put("Weight", 130d);
+        features.put("FootSize", 8d);
         
-        assertEquals("male", c.predict(features));
+        assertEquals("female", c.predict(features));
         
     }
     

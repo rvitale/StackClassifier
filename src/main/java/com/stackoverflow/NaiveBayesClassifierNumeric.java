@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.stackoverflow.utils.CsvReader;
 
@@ -101,10 +102,11 @@ public class NaiveBayesClassifierNumeric {
         Set<String> parameterValues = counters.keySet();
         int counterSums = getTotalCounter();
         for (String parameter : parameterValues) {
-            double paramPosterior = counter.get(parameter) / counterSums;
+            double paramPosterior = counters.get(parameter) / (double) counterSums;
                                 
             for (String featureName : features.keySet()) {
-                paramPosterior *= getFeatureProbability(parameter, featureName);
+                paramPosterior *= getFeatureProbability(parameter, featureName,
+                										features.get(featureName));
             }
             
             System.out.println(parameter + ": " + paramPosterior);
@@ -126,10 +128,10 @@ public class NaiveBayesClassifierNumeric {
         return sum;
     }
     
-    private Double getFeatureProbability(String parameter, String featureName) {
+    private Double getFeatureProbability(String parameter, String featureName, double currentValue) {
         double featureProb =
             1 / Math.sqrt(2 * Math.PI * variances.get(parameter).get(featureName));
-        double expNumerator = Math.pow(features.get(featureName) -
+        double expNumerator = Math.pow(currentValue -
                                        means.get(parameter).get(featureName), 2);
         featureProb *= Math.pow(
             Math.E, (- expNumerator / (2 * variances.get(parameter).get(featureName))));
