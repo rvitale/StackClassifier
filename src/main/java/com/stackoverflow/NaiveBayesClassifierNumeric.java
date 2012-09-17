@@ -13,7 +13,7 @@ public class NaiveBayesClassifierNumeric {
     private String parameterName;
     
     protected Map<String, Integer> counters;
-    protected Map<String, Map<String, Double>> tempValues, means, variances;
+    protected Map<String, Map<String, Double>> squaredDifferences, means, variances;
     
     public NaiveBayesClassifierNumeric(String[] features, String parameter) {
         featureNames = features;
@@ -21,7 +21,7 @@ public class NaiveBayesClassifierNumeric {
         
         counters = new HashMap<String, Integer>();
         
-        tempValues = new HashMap<String, Map<String, Double>>();
+        squaredDifferences = new HashMap<String, Map<String, Double>>();
         means = new HashMap<String, Map<String, Double>>();
         variances = new HashMap<String, Map<String, Double>>();
     }
@@ -48,10 +48,10 @@ public class NaiveBayesClassifierNumeric {
                 }
                 Map<String, Double> parameterMeans = means.get(parameter);
 
-                if(!tempValues.containsKey(parameter)) {
-                    tempValues.put(parameter, newParameterMap());   
+                if(!squaredDifferences.containsKey(parameter)) {
+                    squaredDifferences.put(parameter, newParameterMap());   
                 }
-                Map<String, Double> parameterTempVals = tempValues.get(parameter);
+                Map<String, Double> paramSquaredDiffs = squaredDifferences.get(parameter);
 
                 if(!variances.containsKey(parameter)) {
                     variances.put(parameter, newParameterMap());   
@@ -71,26 +71,70 @@ public class NaiveBayesClassifierNumeric {
                 
                 double delta = feature - parameterMeans.get(featureName);
                 double newMean = parameterMeans.get(featureName) + delta / (counter + 1);
-                double m2 = parameterTempVals.get(featureName) + delta * (feature - newMean);
+                double m2 = paramSquaredDiffs.get(featureName) + delta * (feature - newMean);
                 
                 parameterMeans.put(featureName, newMean);
-                parameterTempVals.put(featureName, m2);
+                paramSquaredDiffs.put(featureName, m2);
                 
             }
 
             counters.put(parameter, counter + 1);
         }
         
-        for(String parameterName : tempValues.keySet()) {
-	        for(String featureName : featureNames) {
-	        	double m2 = tempValues.get(parameterName).get(featureName);
+        for (String parameterName : squaredDifferences.keySet()) {
+	        for (String featureName : featureNames) {
+	        	double m2 = squaredDifferences.get(parameterName).get(featureName);
 	        	double n = counters.get(parameterName);
 	        	//double variance_n = m2 / n;
-	        	double variance = m2 / (n -1);
+	        	double variance = m2 / (n - 1);
 	        	
 	        	variances.get(parameterName).put(featureName, variance);
 	        }
         }
+    }
+    
+    public String predict(Map<String, Double> features) {
+        
+        String maxParam = "";
+        double maxProb = 0.0;
+        
+        Set<String> parameterValues = counters.keySet();
+        int counterSums = getTotalCounter();
+        for (String parameter : parameterValues) {
+            double paramPosterior = counter.get(parameter) / counterSums;
+                                
+            for (String featureName : features.keySet()) {
+                paramPosterior *= getFeatureProbability(parameter, featureName);
+            }
+            
+            System.out.println(parameter + ": " + paramPosterior);
+            
+            if (paramPosterior > maxProb) {
+                maxProb = paramPosterior;
+                maxParam = parameter;
+            }
+        }
+        
+        return maxParam;
+    }
+    
+    private int getTotalCounter() {
+        int sum = 0;
+        for (int parameterCount : counters.values()) {
+            sum += parameterCount;
+        }
+        return sum;
+    }
+    
+    private Double getFeatureProbability(String parameter, String featureName) {
+        double featureProb =
+            1 / Math.sqrt(2 * Math.PI * variances.get(parameter).get(featureName));
+        double expNumerator = Math.pow(features.get(featureName) -
+                                       means.get(parameter).get(featureName), 2);
+        featureProb *= Math.pow(
+            Math.E, (- expNumerator / (2 * variances.get(parameter).get(featureName))));
+            
+        return featureProb;
     }
     
     private Map<String, Double> newParameterMap() {

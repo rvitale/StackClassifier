@@ -34,6 +34,13 @@ public class NaiveBayesClassifierNumericTest {
         assertEquals(5.5833e+02, c.variances.get("female").get("Weight"), 0.01);
         assertEquals(1.6667e+00, c.variances.get("female").get("FootSize"), 0.01);
         
+        Map<String, Double> features = new HashMap<String, Double>();
+        features.put("Height", 6);
+        features.put("Weight", 130);
+        features.put("FootSize", 8);
+        
+        assertEquals("male", c.predict(features));
+        
     }
     
 }
