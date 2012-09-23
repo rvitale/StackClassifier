@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-
+import com.stackoverflow.utils.CsvLine;
 import com.stackoverflow.utils.CsvReader;
 import com.stackoverflow.utils.Tokenizer;
 
@@ -47,7 +46,7 @@ class NaiveBayesClassifier {
        
        CsvReader reader = new CsvReader(trainingFile);
        Map<String, Integer> currentMap;
-       for (Map<String, String> line : reader) {
+       for (CsvLine line : reader) {
            
            if (line.get("OpenStatus").equals("open")) {
                currentMap = openOccurrences;
@@ -124,7 +123,7 @@ class NaiveBayesClassifier {
         int numberOfSamples = 0;
         File trainFile = new File(NaiveBayesClassifier.class.getResource("/train-sample.csv").toURI());
         CsvReader reader = new CsvReader(trainFile);
-        for (Map<String, String> line :  reader) {
+        for (CsvLine line :  reader) {
             String prediction = predict(line.get("BodyMarkdown"));
             if ((prediction.equals("open") && line.get("OpenStatus").equals("open")) ||
                 (!prediction.equals("open") && !line.get("OpenStatus").equals("open"))) {

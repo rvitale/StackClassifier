@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.stackoverflow.utils.CsvLine;
 import com.stackoverflow.utils.CsvReader;
 
 public class NaiveBayesClassifierNumeric {
@@ -29,7 +30,7 @@ public class NaiveBayesClassifierNumeric {
     
     public void train(File trainingFile) throws IOException {
         CsvReader reader = new CsvReader(trainingFile);
-        for (Map<String, String> line : reader) {
+        for (CsvLine line : reader) {
         	String parameter = line.get(parameterName);
         	
         	if(!counters.containsKey(parameter)) {
@@ -39,7 +40,7 @@ public class NaiveBayesClassifierNumeric {
             
             for (String featureName : featureNames) {
                 
-                if(!line.containsKey(featureName)) {
+                if(!line.containsColumn(featureName)) {
                     //TODO: Better error message
                     throw new IOException("Training File does not contain expected data");
                 }
@@ -109,7 +110,7 @@ public class NaiveBayesClassifierNumeric {
                 										features.get(featureName));
             }
             
-            System.out.println(parameter + ": " + paramPosterior);
+            // System.out.println(parameter + ": " + paramPosterior);
             
             if (paramPosterior > maxProb) {
                 maxProb = paramPosterior;

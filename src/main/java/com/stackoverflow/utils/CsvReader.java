@@ -5,13 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.management.RuntimeErrorException;
 
-public class CsvReader implements Iterable<Map<String, String>> {
+public class CsvReader implements Iterable<CsvLine> {
 
 	protected static int numberOfColumns = 15;
 	
@@ -52,8 +50,8 @@ public class CsvReader implements Iterable<Map<String, String>> {
 		return reader == null;
 	}
 	
-	public Iterator<Map<String, String>> iterator() {
-		return new Iterator<Map<String, String>>() {
+	public Iterator<CsvLine> iterator() {
+		return new Iterator<CsvLine>() {
 			
 			private String nextLine;
 
@@ -75,11 +73,11 @@ public class CsvReader implements Iterable<Map<String, String>> {
 				return true;
 			}
 
-			public Map<String, String> next() {
+			public CsvLine next() {
 				// Do we open the stream if we find it closed?
 				int colIndex = 0, lastComma = 0, numberOfQuotes = 0;
 				String carry = "";  // Used for multiline fields.
-				Map<String, String> record = new HashMap<String, String>();
+				CsvLine record = new CsvLine();
 				
                 // TODO: handle the case that a given row doesn't have the
                 // same amount of columns as the header. In that case just
@@ -126,7 +124,7 @@ public class CsvReader implements Iterable<Map<String, String>> {
 				}
 				
 				// Sanity check: verify that we have filled all the columns.
-				if (record.keySet().size() != numberOfColumns) {
+				if (record.columns().size() != numberOfColumns) {
 					// We can't throw a Throwable here.
 					throw new RuntimeErrorException(
 							new Error("Unexpected end of file"));

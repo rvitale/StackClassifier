@@ -1,15 +1,12 @@
 package com.stackoverflow.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 import org.junit.Test;
-
-import com.stackoverflow.utils.CsvReader;
 
 public class CsvReaderTest {
 
@@ -27,8 +24,8 @@ public class CsvReaderTest {
 			e.printStackTrace();
 		}
 		int iterations = 0;
-		for (Map<String, String> line : reader) {
-			assertEquals(CsvReader.numberOfColumns, line.keySet().size());
+		for (CsvLine line : reader) {
+			assertEquals(CsvReader.numberOfColumns, line.columns().size());
 			++iterations;
 		}
 		assertEquals(2, iterations);
