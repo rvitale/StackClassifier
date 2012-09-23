@@ -7,13 +7,13 @@ import java.util.Set;
 
 public class CsvLine {
 
-	Map<String, Object> csv;
+	Map<String, String> csv;
 
 	public CsvLine() {
-		csv = new HashMap<String, Object>();
+		csv = new HashMap<String, String>();
 	}
 	
-	public void put(String key, Object value) {
+	public void put(String key, String value) {
 		csv.put(key, value);
 	}
 	
@@ -21,10 +21,12 @@ public class CsvLine {
 		return (String)csv.get(key);
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	public <T> T get(String key, Class<T> type) {
-		return (T) csv.get(key);
+	public <T extends Number> T get(String key, Class<T> type) throws ClassCastException { 
+		try {
+			return type.getConstructor(String.class).newInstance(csv.get(key));
+		} catch (Exception e) {
+			throw new ClassCastException(e.getMessage());
+		}
 	}
 	
 	public Set<String> columns() {
