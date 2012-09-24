@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import javax.management.RuntimeErrorException;
 
-public class CsvReader implements Iterable<CsvLine> {
+public class CsvReader<T extends CsvLine> implements Iterable<T> {
 
 	protected static int numberOfColumns = 15;
 	
@@ -50,8 +50,8 @@ public class CsvReader implements Iterable<CsvLine> {
 		return reader == null;
 	}
 	
-	public Iterator<CsvLine> iterator() {
-		return new Iterator<CsvLine>() {
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
 			
 			private String nextLine;
 
@@ -73,11 +73,11 @@ public class CsvReader implements Iterable<CsvLine> {
 				return true;
 			}
 
-			public CsvLine next() {
+			public T next() {
 				// Do we open the stream if we find it closed?
 				int colIndex = 0, lastComma = 0, numberOfQuotes = 0;
 				String carry = "";  // Used for multiline fields.
-				CsvLine record = new CsvLine();
+				T record = new T(); // DEH!
 				
                 // TODO: handle the case that a given row doesn't have the
                 // same amount of columns as the header. In that case just
