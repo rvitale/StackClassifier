@@ -16,9 +16,11 @@ public class CsvReader<T extends CsvLine> implements Iterable<T> {
 	private File file;
 	private BufferedReader reader;
 	private String[] columns;
+	private Class<T> type;
 
-	public CsvReader(File file) throws IOException {
+	public CsvReader(File file, Class<T> type) throws IOException {
 		this.file = file;
+		this.type = type;
 		openStream();
 	}
 	
@@ -77,7 +79,14 @@ public class CsvReader<T extends CsvLine> implements Iterable<T> {
 				// Do we open the stream if we find it closed?
 				int colIndex = 0, lastComma = 0, numberOfQuotes = 0;
 				String carry = "";  // Used for multiline fields.
-				T record = new T(); // DEH!
+
+				// TODO: WTTTTFFFFFF!!!!!!!!
+				T record;
+				try {
+					record = type.newInstance();
+				} catch (Exception e1) {
+					throw new RuntimeErrorException(new Error(e1));
+				}
 				
                 // TODO: handle the case that a given row doesn't have the
                 // same amount of columns as the header. In that case just

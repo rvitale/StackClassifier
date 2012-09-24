@@ -7,13 +7,14 @@ import java.util.Map;
 
 import com.stackoverflow.utils.CsvLine;
 import com.stackoverflow.utils.CsvReader;
+import com.stackoverflow.utils.StackOverflowCsvLine;
 
 public class Main {
 
     protected static double verifyTrainData(NaiveBayesClassifierNumeric c, File trainFile, String[] features) throws IOException {
         int correctMatch = 0;
         int numberOfSamples = 0;
-        CsvReader reader = new CsvReader(trainFile);
+        CsvReader<StackOverflowCsvLine> reader = new CsvReader<StackOverflowCsvLine>(trainFile, StackOverflowCsvLine.class);
         
         Map<String, Double> currentFeatures = new HashMap<String, Double>();
         for(String feature : features) {
@@ -21,7 +22,7 @@ public class Main {
         }
         
         
-        for (CsvLine line :  reader) {
+        for (CsvLine line : reader) {
         	
         	for(String feature : features) {
         		currentFeatures.put(feature, Double.parseDouble(line.get(feature)));

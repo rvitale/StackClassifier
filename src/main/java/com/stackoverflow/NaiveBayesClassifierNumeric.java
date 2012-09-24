@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.stackoverflow.utils.CsvLine;
 import com.stackoverflow.utils.CsvReader;
+import com.stackoverflow.utils.StackOverflowCsvLine;
 
 public class NaiveBayesClassifierNumeric {
     
@@ -29,7 +30,7 @@ public class NaiveBayesClassifierNumeric {
     }
     
     public void train(File trainingFile) throws IOException {
-        CsvReader reader = new CsvReader(trainingFile);
+        CsvReader<StackOverflowCsvLine> reader = new CsvReader<StackOverflowCsvLine>(trainingFile, StackOverflowCsvLine.class);
         for (CsvLine line : reader) {
         	String parameter = line.get(parameterName);
         	

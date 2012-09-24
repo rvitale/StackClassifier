@@ -12,6 +12,7 @@ import java.util.Set;
 
 import com.stackoverflow.utils.CsvLine;
 import com.stackoverflow.utils.CsvReader;
+import com.stackoverflow.utils.StackOverflowCsvLine;
 import com.stackoverflow.utils.Tokenizer;
 
 class NaiveBayesClassifier {
@@ -44,7 +45,7 @@ class NaiveBayesClassifier {
    
    public void train(File trainingFile) throws IOException {
        
-       CsvReader reader = new CsvReader(trainingFile);
+       CsvReader<CsvLine> reader = new CsvReader<CsvLine>(trainingFile, CsvLine.class);
        Map<String, Integer> currentMap;
        for (CsvLine line : reader) {
            
@@ -122,7 +123,7 @@ class NaiveBayesClassifier {
         int correctMatch = 0;
         int numberOfSamples = 0;
         File trainFile = new File(NaiveBayesClassifier.class.getResource("/train-sample.csv").toURI());
-        CsvReader reader = new CsvReader(trainFile);
+        CsvReader<CsvLine> reader = new CsvReader<CsvLine>(trainFile, CsvLine.class);
         for (CsvLine line :  reader) {
             String prediction = predict(line.get("BodyMarkdown"));
             if ((prediction.equals("open") && line.get("OpenStatus").equals("open")) ||

@@ -12,12 +12,12 @@ public class CsvReaderTest {
 
 	@Test
 	public void iterableTest() {
-		CsvReader reader = null;
+		CsvReader<CsvLine> reader = null;
 		try {
 			File testFile = new File(this.getClass()
 				.getResource("/com/stackoverflow/utils/sample.csv")
 				.toURI());
-			reader = new CsvReader(testFile);
+			reader = new CsvReader<CsvLine>(testFile, CsvLine.class);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
